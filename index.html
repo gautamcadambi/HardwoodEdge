@@ -1205,45 +1205,102 @@ document.querySelectorAll('.props-filters .chip').forEach(chip => {
 
 // ═══════════════════════════════════════════════════════════════
 // INSIDER WIRE (LIVE · RSS aggregation)
-// Since X API is paywalled, we aggregate three feeds that source
-// Shams's reporting (often within minutes of his tweets):
-//   · RotoWire NBA news
-//   · Rotoworld/NBC Sports NBA
-//   · Yahoo Sports NBA
-// Routed through rss2json.com (free, no key, CORS-enabled).
+// X API is paywalled, so we aggregate feeds that mirror Shams's
+// reporting within minutes: RotoWire / NBC-Rotoworld / Yahoo.
+//
+// Approach: try multiple free CORS proxies in sequence until one
+// returns XML, then parse with DOMParser. This is more resilient
+// than relying on a single rss2json-style aggregator that often
+// throttles or requires keys.
 // ═══════════════════════════════════════════════════════════════
 
 const INSIDER_FEEDS = [
-  { src: 'RotoWire', badge: 'roto', url: 'https://www.rotowire.com/rss/news.php?sport=NBA' },
-  { src: 'NBC/Roto', badge: 'espn', url: 'https://www.nbcsports.com/fantasy/basketball/player-news/feed/' },
-  { src: 'Yahoo', badge: 'yahoo', url: 'https://sports.yahoo.com/nba/rss.xml' },
+  { src: 'RotoWire', badge: 'roto',  url: 'https://www.rotowire.com/rss/news.php?sport=NBA' },
+  { src: 'ESPN',     badge: 'espn',  url: 'https://www.espn.com/espn/rss/nba/news' },
+  { src: 'Yahoo',    badge: 'yahoo', url: 'https://sports.yahoo.com/nba/rss.xml' },
+];
+
+// Free CORS proxies, tried in order. If one fails, try the next.
+const CORS_PROXIES = [
+  (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  (u) => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(u)}`,
 ];
 
 let insiderItems = [];
-let insiderLastFetch = 0;
+
+async function fetchViaAnyProxy(feedUrl) {
+  for (let i = 0; i < CORS_PROXIES.length; i++) {
+    try {
+      const proxyUrl = CORS_PROXIES[i](feedUrl);
+      const res = await fetch(proxyUrl, { headers: { 'Accept': 'application/rss+xml, application/xml, text/xml, */*' } });
+      if (!res.ok) {
+        console.warn(`Proxy ${i} HTTP ${res.status} for ${feedUrl}`);
+        continue;
+      }
+      const text = await res.text();
+      if (!text || text.length < 100) {
+        console.warn(`Proxy ${i} returned empty/short for ${feedUrl}`);
+        continue;
+      }
+      return text;
+    } catch (e) {
+      console.warn(`Proxy ${i} threw for ${feedUrl}:`, e.message);
+    }
+  }
+  throw new Error('All proxies failed for ' + feedUrl);
+}
+
+function parseRssXml(xmlText, feedMeta) {
+  const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+  // Guard against error documents
+  if (doc.querySelector('parsererror')) {
+    console.warn('XML parse error for', feedMeta.src);
+    return [];
+  }
+  // RSS uses <item>, Atom uses <entry>
+  const items = doc.querySelectorAll('item, entry');
+  const out = [];
+  items.forEach(it => {
+    const title = (it.querySelector('title')?.textContent || '').trim();
+    // description for RSS, summary/content for Atom
+    let desc = (it.querySelector('description')?.textContent || it.querySelector('summary')?.textContent || it.querySelector('content')?.textContent || '').trim();
+    const linkEl = it.querySelector('link');
+    const link = linkEl?.textContent?.trim() || linkEl?.getAttribute('href') || '';
+    const pubStr = it.querySelector('pubDate')?.textContent || it.querySelector('published')?.textContent || it.querySelector('updated')?.textContent || '';
+    const pub = pubStr ? new Date(pubStr) : new Date();
+    if (!title) return;
+    out.push({
+      src: feedMeta.src,
+      badge: feedMeta.badge,
+      title: stripHtml(title).slice(0, 300),
+      desc: stripHtml(desc).slice(0, 240),
+      link,
+      pub: isNaN(pub.getTime()) ? new Date() : pub,
+    });
+  });
+  return out;
+}
 
 async function loadInsiderWire() {
   const feed = document.getElementById('shams-feed');
   try {
     const results = await Promise.allSettled(
       INSIDER_FEEDS.map(async f => {
-        const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}&count=12`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(f.src + ' ' + res.status);
-        const data = await res.json();
-        if (data.status !== 'ok') throw new Error(f.src + ' bad status');
-        return (data.items || []).map(item => ({
-          src: f.src,
-          badge: f.badge,
-          title: stripHtml(item.title || '').slice(0, 300),
-          desc: stripHtml(item.description || '').slice(0, 240),
-          link: item.link,
-          pub: item.pubDate ? new Date(item.pubDate) : new Date(),
-        }));
+        const xml = await fetchViaAnyProxy(f.url);
+        return parseRssXml(xml, f);
       })
     );
 
-    // Merge, dedupe by title, sort by publish date desc
+    // Log per-source results to the console so we can see what's working
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled') {
+        console.log(`✓ ${INSIDER_FEEDS[i].src}: ${r.value.length} items`);
+      } else {
+        console.warn(`✗ ${INSIDER_FEEDS[i].src}: ${r.reason?.message || r.reason}`);
+      }
+    });
+
     const all = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
     const seen = new Set();
     const merged = all.filter(it => {
@@ -1253,19 +1310,21 @@ async function loadInsiderWire() {
       return true;
     }).sort((a, b) => b.pub - a.pub).slice(0, 30);
 
-    if (merged.length === 0) throw new Error('No items from any source');
+    if (merged.length === 0) throw new Error('No items parsed from any source');
 
-    // Mark any items newer than last fetch as "NEW"
     const prevLatest = insiderItems[0]?.pub?.getTime() || 0;
     insiderItems = merged;
-    insiderLastFetch = Date.now();
-
     renderInsiderWire(prevLatest);
   } catch (err) {
-    console.warn('Insider wire fetch failed:', err);
-    // Only show error if we have no prior data
+    console.error('Insider wire fetch failed:', err);
     if (insiderItems.length === 0) {
-      feed.innerHTML = `<div class="error-state" style="padding: 30px 20px; font-size: 10px;">Insider wire unreachable.<br/>Retrying in 90s.</div>`;
+      feed.innerHTML = `
+        <div class="error-state" style="padding: 30px 20px; font-size: 10px; text-align: left; line-height: 1.6;">
+          <div style="color: var(--oxblood-bright); margin-bottom: 10px;">INSIDER WIRE UNREACHABLE</div>
+          <div style="color: var(--muted); text-transform: none; letter-spacing: 0.03em; font-size: 10.5px;">
+            All CORS proxies returned errors. Open browser DevTools (F12) → Console tab → share what you see. Retrying in 90s.
+          </div>
+        </div>`;
     }
   }
 }
@@ -1273,9 +1332,7 @@ async function loadInsiderWire() {
 function stripHtml(s) {
   const d = document.createElement('div');
   d.innerHTML = s;
-  let txt = d.textContent || d.innerText || '';
-  // Collapse excessive whitespace
-  return txt.replace(/\s+/g, ' ').trim();
+  return (d.textContent || d.innerText || '').replace(/\s+/g, ' ').trim();
 }
 
 function renderInsiderWire(prevLatestMs) {
@@ -1286,7 +1343,6 @@ function renderInsiderWire(prevLatestMs) {
     const mins = Math.floor((Date.now() - it.pub.getTime()) / 60000);
     const ago = mins < 1 ? 'Just now' : mins < 60 ? `${mins}m ago` : mins < 1440 ? `${Math.floor(mins / 60)}h ago` : `${Math.floor(mins / 1440)}d ago`;
     const isNew = prevLatestMs && it.pub.getTime() > prevLatestMs;
-    // Use title + description if description adds info, else just title
     const body = it.desc && !it.title.includes(it.desc.slice(0, 30))
       ? `<strong>${it.title}</strong><br/><span style="color: var(--paper-3); font-size: 12.5px;">${it.desc}</span>`
       : it.title;
@@ -1304,7 +1360,7 @@ function renderInsiderWire(prevLatestMs) {
 
 // Re-render every 30s to tick the relative timestamps
 setInterval(() => renderInsiderWire(0), 30000);
-// Re-fetch sources every 90s (well within rss2json free tier limits)
+// Re-fetch sources every 90s
 setInterval(loadInsiderWire, 90000);
 
 // ═══════════════════════════════════════════════════════════════
