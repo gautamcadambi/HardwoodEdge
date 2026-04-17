@@ -297,6 +297,7 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
+    flex-wrap: wrap;
   }
   .props-filters .chip {
     padding: 6px 12px;
@@ -307,6 +308,102 @@
   }
   .props-filters .chip:hover { border-color: var(--oxblood-bright); }
   .props-filters .chip.active { background: var(--oxblood); border-color: var(--oxblood); color: var(--paper); }
+  .props-filters .spacer { flex: 1; }
+  .credits-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .credits-meter .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .credits-meter.warn .dot { background: var(--gold); }
+  .credits-meter.danger .dot { background: var(--oxblood-bright); animation: pulse 1.5s infinite; }
+  .credits-meter .val { color: var(--paper); font-weight: 500; }
+
+  .props-disclaimer {
+    padding: 10px 28px;
+    background: rgba(212, 165, 71, 0.06);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  /* Game selector row */
+  .game-selector {
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .game-selector::-webkit-scrollbar { height: 3px; }
+  .game-selector::-webkit-scrollbar-thumb { background: var(--ink-3); }
+  .game-chip {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    background: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 140px;
+  }
+  .game-chip:hover { border-color: var(--oxblood-bright); }
+  .game-chip.active { border-color: var(--oxblood-bright); background: rgba(196, 47, 47, 0.08); }
+  .game-chip .gc-time {
+    font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .game-chip .gc-live { color: var(--oxblood-bright); }
+  .game-chip .gc-matchup {
+    font-family: var(--font-display); font-size: 13px; font-weight: 600;
+    line-height: 1.25;
+  }
+  .game-chip .gc-lines {
+    font-family: var(--font-mono); font-size: 10px; color: var(--gold);
+    margin-top: 4px; letter-spacing: 0.05em;
+  }
+
+  /* Game-line odds strip (shown when game selected) */
+  .game-lines-strip {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ink-2);
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .gls-label {
+    font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .gls-market { display: flex; gap: 6px; align-items: center; }
+  .gls-market-label {
+    font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-right: 4px;
+  }
+  .gls-pill {
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--paper);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 60px;
+  }
+  .gls-pill:hover { border-color: var(--gold); }
+  .gls-pill.selected { border-color: var(--oxblood-bright); background: rgba(196, 47, 47, 0.1); }
+  .gls-pill .t { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+  .gls-pill .p { color: var(--gold); }
 
   .props-container {
     display: grid;
@@ -335,7 +432,20 @@
   .prop-info .meta { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-top: 2px; }
   .prop-info .prop-label { font-family: var(--font-mono); font-size: 12px; color: var(--gold); margin-top: 4px; letter-spacing: 0.05em; }
   .prop-info .pick-reason { font-size: 12px; color: var(--paper-3); margin-top: 6px; font-style: italic; max-width: 400px; }
-  .prop-odds { display: flex; gap: 8px; }
+  .prop-odds {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 6px;
+    align-items: center;
+  }
+  .book-label {
+    font-family: var(--font-mono); font-size: 9px;
+    color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    padding: 4px 2px;
+  }
+  .book-label.dk { color: #53d337; }
+  .book-label.fd { color: #1a74ff; }
   .odds-btn {
     padding: 10px 14px;
     background: var(--ink-2);
@@ -346,6 +456,7 @@
   }
   .odds-btn:hover { border-color: var(--oxblood-bright); background: var(--ink-3); }
   .odds-btn.selected { border-color: var(--oxblood-bright); background: rgba(196, 47, 47, 0.1); }
+  .odds-btn.empty { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
   .odds-btn .label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   .odds-btn .line { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--paper); margin-top: 2px; }
   .odds-btn .price { font-family: var(--font-mono); font-size: 12px; color: var(--gold); margin-top: 2px; }
@@ -663,22 +774,37 @@
     <section id="tab-props" class="tab-content">
       <div class="section-head">
         <div>
-          <div class="kicker">Parlay Desk · Stake-Style Odds</div>
+          <div class="kicker">Parlay Desk · Live from DraftKings &amp; FanDuel</div>
           <h2>Player Props &amp; Picks</h2>
         </div>
-        <div class="meta">Curated picks · Updated pre-tip</div>
+        <div class="meta" id="props-updated">Awaiting slate…</div>
+      </div>
+      <div class="props-disclaimer">
+        ⚠ Demo / Research Only · Virtual currency, no real wagers · Odds sourced from US bookmakers via The Odds API
       </div>
       <div class="props-filters">
-        <span style="color: var(--paper); margin-right: 8px;">Filter:</span>
-        <button class="chip active" data-filter="all">All Props</button>
+        <span style="color: var(--paper); margin-right: 8px;">Markets:</span>
+        <button class="chip active" data-filter="all">All</button>
         <button class="chip" data-filter="points">Points</button>
         <button class="chip" data-filter="rebounds">Rebounds</button>
         <button class="chip" data-filter="assists">Assists</button>
         <button class="chip" data-filter="threes">Threes</button>
-        <button class="chip" data-filter="hot">🔥 Hot Picks</button>
+        <div class="spacer"></div>
+        <div class="credits-meter" id="credits-meter">
+          <span class="dot"></span>
+          <span>API</span>
+          <span class="val" id="credits-val">—</span>
+          <span>credits</span>
+        </div>
       </div>
+      <div class="game-selector" id="game-selector">
+        <div class="loading-state" style="padding: 20px; flex: 1;">Loading today's slate…</div>
+      </div>
+      <div id="game-lines-strip"></div>
       <div class="props-container">
-        <div id="props-list" class="props-list"></div>
+        <div id="props-list" class="props-list">
+          <div class="loading-state">Select a game above to load player props</div>
+        </div>
         <aside class="bet-slip">
           <h3>Bet Slip</h3>
           <div class="slip-sub">Parlay · <span id="slip-count">0</span> legs</div>
@@ -1060,84 +1186,410 @@ async function loadNews() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PROPS (MOCK — would use The Odds API or sportsdata.io in prod)
+// PLAYER PROPS (LIVE · The Odds API via Cloudflare Worker proxy)
+// Free tier = 500 credits/month. Credit cost = markets × regions.
+// Strategy:
+//   · Load games list cheaply (events endpoint = 0 credits)
+//   · Load game lines (h2h + spreads + totals) for selected game — 3 credits
+//   · Load player props (points + reb + ast + 3pt) for selected game — 4 credits
+//   · Cache 10 minutes in browser; auto-fallback to mock when quota zero
 // ═══════════════════════════════════════════════════════════════
-const MOCK_PROPS = [
-  { name: 'Luka Dončić', team: 'LAL', pos: 'G', prop: 'Points', line: 32.5, over: -115, under: -105, reason: 'Averaging 36.8 over last 5 games. Matchup vs bottom-10 perimeter defense.', hot: true, cat: 'points' },
-  { name: 'Nikola Jokić', team: 'DEN', pos: 'C', prop: 'Rebounds', line: 12.5, over: -120, under: +100, reason: 'Opponent allows 3rd-most boards to centers. Gobert rest questionable.', hot: true, cat: 'rebounds' },
-  { name: 'Shai Gilgeous-Alexander', team: 'OKC', pos: 'G', prop: 'Points', line: 30.5, over: -110, under: -110, reason: 'Has cleared 30 in 7 of last 10. Pace-up spot vs WAS.', hot: true, cat: 'points' },
-  { name: 'Jayson Tatum', team: 'BOS', pos: 'F', prop: '3-Pointers Made', line: 3.5, over: +105, under: -125, reason: 'Volume down post-ASB. Fade the over.', hot: false, cat: 'threes' },
-  { name: 'Tyrese Haliburton', team: 'IND', pos: 'G', prop: 'Assists', line: 10.5, over: -125, under: +105, reason: 'Pacers pace remains #1 in league. No Siakam = more on-ball.', hot: true, cat: 'assists' },
-  { name: 'Anthony Edwards', team: 'MIN', pos: 'G', prop: 'Points', line: 27.5, over: -110, under: -110, reason: 'Back-to-back spot. Usage concerns vs switch-heavy opponent.', hot: false, cat: 'points' },
-  { name: 'Giannis Antetokounmpo', team: 'MIL', pos: 'F', prop: 'Rebounds', line: 11.5, over: -140, under: +120, reason: 'Iron-clad floor. Hit in 9 straight.', hot: true, cat: 'rebounds' },
-  { name: 'Steph Curry', team: 'GSW', pos: 'G', prop: '3-Pointers Made', line: 4.5, over: +115, under: -135, reason: 'Home split elite. 4.7 3PM/g at Chase.', hot: true, cat: 'threes' },
-  { name: 'Victor Wembanyama', team: 'SAS', pos: 'C', prop: 'Blocks', line: 3.5, over: -140, under: +115, reason: 'Generational rim protection. Matchup vs interior-heavy offense.', hot: true, cat: 'points' },
-  { name: 'Trae Young', team: 'ATL', pos: 'G', prop: 'Assists', line: 11.5, over: -115, under: -105, reason: 'Season-long assist leader. Capela back = lob city.', hot: false, cat: 'assists' },
-  { name: 'Paolo Banchero', team: 'ORL', pos: 'F', prop: 'Points', line: 24.5, over: -110, under: -110, reason: 'Solid usage but TOV concerns vs disciplined D.', hot: false, cat: 'points' },
-  { name: 'Damian Lillard', team: 'MIL', pos: 'G', prop: '3-Pointers Made', line: 3.5, over: +100, under: -120, reason: 'Volume shooter. Revenge game narrative.', hot: true, cat: 'threes' },
-];
 
-function renderProps() {
+const ODDS_PROXY = 'https://hardwood-edge-odds.gautamcadambi.workers.dev';
+const BOOKS = ['draftkings', 'fanduel'];
+const PROP_MARKETS = ['player_points', 'player_rebounds', 'player_assists', 'player_threes'];
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
+
+const oddsState = {
+  events: [],           // [{id, commence_time, home_team, away_team, ...}]
+  selectedEventId: null,
+  gameLines: {},        // eventId → {h2h, spreads, totals} per book
+  playerProps: {},      // eventId → [{player, market, line, over, under, ...}]
+  activeFilter: 'all',
+  creditsRemaining: null,
+  usingMocks: false,
+};
+
+// ─── Cache helper ──────────────────────────────────────────────
+function cacheGet(key) {
+  try {
+    const raw = sessionStorage.getItem('hwe-odds:' + key);
+    if (!raw) return null;
+    const { t, v } = JSON.parse(raw);
+    if (Date.now() - t > CACHE_TTL_MS) return null;
+    return v;
+  } catch { return null; }
+}
+function cacheSet(key, v) {
+  try { sessionStorage.setItem('hwe-odds:' + key, JSON.stringify({ t: Date.now(), v })); } catch {}
+}
+
+// ─── Low-level proxy fetch ─────────────────────────────────────
+async function oddsFetch(path, params = {}) {
+  const qs = new URLSearchParams(params).toString();
+  const url = `${ODDS_PROXY}${path}${qs ? '?' + qs : ''}`;
+  const cacheKey = path + '?' + qs;
+  const cached = cacheGet(cacheKey);
+  if (cached) return { data: cached, fromCache: true };
+
+  const res = await fetch(url);
+  const remaining = res.headers.get('X-Requests-Remaining');
+  if (remaining !== null) updateCreditsDisplay(parseInt(remaining));
+
+  if (res.status === 429 || res.status === 401) {
+    throw new Error('quota_exhausted');
+  }
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
+  }
+  const data = await res.json();
+  cacheSet(cacheKey, data);
+  return { data, fromCache: false };
+}
+
+function updateCreditsDisplay(remaining) {
+  oddsState.creditsRemaining = remaining;
+  const meter = document.getElementById('credits-meter');
+  const val = document.getElementById('credits-val');
+  if (!meter || !val) return;
+  val.textContent = remaining;
+  meter.classList.remove('warn', 'danger');
+  if (remaining < 20) meter.classList.add('danger');
+  else if (remaining < 100) meter.classList.add('warn');
+}
+
+// ═══ LOAD EVENTS (games) — 0 credits, always free ══════════════
+async function loadOddsEvents() {
+  try {
+    const { data } = await oddsFetch('/v4/sports/basketball_nba/events');
+    oddsState.events = Array.isArray(data) ? data : [];
+    oddsState.usingMocks = false;
+    renderGameSelector();
+    document.getElementById('props-updated').textContent =
+      oddsState.events.length > 0
+        ? `${oddsState.events.length} games on the board`
+        : 'No upcoming games';
+  } catch (err) {
+    console.warn('Odds events load failed, falling back to mocks:', err.message);
+    fallbackToMocks();
+  }
+}
+
+// ═══ LOAD GAME LINES — 3 credits (h2h + spreads + totals) ══════
+async function loadGameLines(eventId) {
+  if (oddsState.gameLines[eventId]) return oddsState.gameLines[eventId];
+  try {
+    const { data } = await oddsFetch(
+      `/v4/sports/basketball_nba/events/${eventId}/odds`,
+      {
+        regions: 'us',
+        markets: 'h2h,spreads,totals',
+        oddsFormat: 'american',
+        bookmakers: BOOKS.join(','),
+      }
+    );
+    const lines = parseGameLines(data);
+    oddsState.gameLines[eventId] = lines;
+    return lines;
+  } catch (err) {
+    console.warn('Game lines failed for', eventId, err.message);
+    if (err.message === 'quota_exhausted') fallbackToMocks();
+    return null;
+  }
+}
+
+function parseGameLines(data) {
+  const out = { h2h: {}, spreads: {}, totals: {}, home: data.home_team, away: data.away_team };
+  (data.bookmakers || []).forEach(bm => {
+    bm.markets?.forEach(m => {
+      if (!out[m.key]) return;
+      out[m.key][bm.key] = m.outcomes;
+    });
+  });
+  return out;
+}
+
+// ═══ LOAD PLAYER PROPS — 4 credits per event ═══════════════════
+async function loadPlayerProps(eventId) {
+  if (oddsState.playerProps[eventId]) return oddsState.playerProps[eventId];
+  try {
+    const { data } = await oddsFetch(
+      `/v4/sports/basketball_nba/events/${eventId}/odds`,
+      {
+        regions: 'us',
+        markets: PROP_MARKETS.join(','),
+        oddsFormat: 'american',
+        bookmakers: BOOKS.join(','),
+      }
+    );
+    const props = parsePlayerProps(data);
+    oddsState.playerProps[eventId] = props;
+    return props;
+  } catch (err) {
+    console.warn('Player props failed for', eventId, err.message);
+    if (err.message === 'quota_exhausted') fallbackToMocks();
+    return null;
+  }
+}
+
+function parsePlayerProps(data) {
+  // Group by {player, market} and collect over/under from each book.
+  const grouped = new Map(); // key: player||market
+  (data.bookmakers || []).forEach(bm => {
+    bm.markets?.forEach(m => {
+      if (!PROP_MARKETS.includes(m.key)) return;
+      (m.outcomes || []).forEach(o => {
+        const key = `${o.description}||${m.key}`;
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            player: o.description,
+            market: m.key,
+            line: o.point,
+            books: {},
+          });
+        }
+        const entry = grouped.get(key);
+        if (!entry.books[bm.key]) entry.books[bm.key] = {};
+        entry.books[bm.key][o.name.toLowerCase()] = { price: o.price, line: o.point };
+      });
+    });
+  });
+  return Array.from(grouped.values());
+}
+
+// ═══ FALLBACK MOCKS (when API fails or quota out) ══════════════
+const MOCK_PROPS = [
+  { player: 'Luka Dončić', market: 'player_points',    line: 32.5, books: { draftkings: { over: { price: -115, line: 32.5 }, under: { price: -105, line: 32.5 } }, fanduel: { over: { price: -110, line: 32.5 }, under: { price: -110, line: 32.5 } } } },
+  { player: 'Nikola Jokić', market: 'player_rebounds', line: 12.5, books: { draftkings: { over: { price: -120, line: 12.5 }, under: { price: +100, line: 12.5 } }, fanduel: { over: { price: -125, line: 12.5 }, under: { price: +105, line: 12.5 } } } },
+  { player: 'Shai Gilgeous-Alexander', market: 'player_points', line: 30.5, books: { draftkings: { over: { price: -110, line: 30.5 }, under: { price: -110, line: 30.5 } }, fanduel: { over: { price: -115, line: 30.5 }, under: { price: -105, line: 30.5 } } } },
+  { player: 'Jayson Tatum', market: 'player_threes',   line: 3.5,  books: { draftkings: { over: { price: +105, line: 3.5 }, under: { price: -125, line: 3.5 } }, fanduel: { over: { price: +100, line: 3.5 }, under: { price: -120, line: 3.5 } } } },
+  { player: 'Tyrese Haliburton', market: 'player_assists', line: 10.5, books: { draftkings: { over: { price: -125, line: 10.5 }, under: { price: +105, line: 10.5 } }, fanduel: { over: { price: -130, line: 10.5 }, under: { price: +110, line: 10.5 } } } },
+  { player: 'Giannis Antetokounmpo', market: 'player_rebounds', line: 11.5, books: { draftkings: { over: { price: -140, line: 11.5 }, under: { price: +120, line: 11.5 } }, fanduel: { over: { price: -135, line: 11.5 }, under: { price: +115, line: 11.5 } } } },
+];
+const MOCK_EVENT_ID = 'demo';
+
+function fallbackToMocks() {
+  if (oddsState.usingMocks) return;
+  oddsState.usingMocks = true;
+  oddsState.events = [{
+    id: MOCK_EVENT_ID,
+    commence_time: new Date().toISOString(),
+    home_team: 'Demo Home',
+    away_team: 'Demo Away',
+  }];
+  oddsState.playerProps[MOCK_EVENT_ID] = MOCK_PROPS;
+  oddsState.selectedEventId = MOCK_EVENT_ID;
+  renderGameSelector();
+  renderPlayerProps();
+  document.getElementById('props-updated').textContent = 'Live odds unavailable · Demo data';
+}
+
+// ═══ RENDER: Game selector ═════════════════════════════════════
+function renderGameSelector() {
+  const el = document.getElementById('game-selector');
+  if (oddsState.events.length === 0) {
+    el.innerHTML = '<div class="loading-state" style="padding: 20px; flex: 1;">No games available on today\'s board</div>';
+    return;
+  }
+  if (oddsState.usingMocks) {
+    el.innerHTML = '<div class="game-chip active" style="min-width: 200px;"><div class="gc-time">DEMO MODE</div><div class="gc-matchup">Sample Props Data</div><div class="gc-lines">API unavailable</div></div>';
+    return;
+  }
+  el.innerHTML = oddsState.events.map(ev => {
+    const tip = new Date(ev.commence_time);
+    const now = new Date();
+    const isLive = tip < now;
+    const timeStr = isLive
+      ? 'IN PROGRESS'
+      : tip.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const active = ev.id === oddsState.selectedEventId ? 'active' : '';
+    return `
+      <div class="game-chip ${active}" data-event-id="${ev.id}">
+        <div class="gc-time ${isLive ? 'gc-live' : ''}">${isLive ? '● ' : ''}${timeStr}</div>
+        <div class="gc-matchup">${shortTeam(ev.away_team)}<br/>@ ${shortTeam(ev.home_team)}</div>
+      </div>
+    `;
+  }).join('');
+
+  el.querySelectorAll('.game-chip').forEach(chip => {
+    chip.addEventListener('click', () => selectGame(chip.dataset.eventId));
+  });
+}
+
+function shortTeam(name) {
+  // "Los Angeles Lakers" → "LA Lakers" style; "Oklahoma City Thunder" → "OKC Thunder"
+  const map = {
+    'Los Angeles Lakers': 'LA Lakers',
+    'Los Angeles Clippers': 'LA Clippers',
+    'Oklahoma City Thunder': 'OKC Thunder',
+    'Golden State Warriors': 'GS Warriors',
+    'New Orleans Pelicans': 'NO Pelicans',
+    'San Antonio Spurs': 'SA Spurs',
+  };
+  return map[name] || name;
+}
+
+// ═══ Select a game → load lines + props ════════════════════════
+async function selectGame(eventId) {
+  if (eventId === MOCK_EVENT_ID) return;
+  oddsState.selectedEventId = eventId;
+  renderGameSelector();
+  document.getElementById('props-list').innerHTML = '<div class="loading-state">Loading game lines and props… (uses ~7 API credits)</div>';
+  document.getElementById('game-lines-strip').innerHTML = '';
+
+  const [lines, props] = await Promise.all([
+    loadGameLines(eventId),
+    loadPlayerProps(eventId),
+  ]);
+
+  if (lines) renderGameLines(lines);
+  if (props) renderPlayerProps();
+  else document.getElementById('props-list').innerHTML = '<div class="error-state">Could not load props for this game.</div>';
+}
+
+// ═══ Render: Game lines strip ══════════════════════════════════
+function renderGameLines(lines) {
+  const strip = document.getElementById('game-lines-strip');
+  // Use DraftKings as primary; fall back to FanDuel
+  const pickBook = (mkt) => lines[mkt]?.draftkings || lines[mkt]?.fanduel || [];
+  const h2h = pickBook('h2h');
+  const spreads = pickBook('spreads');
+  const totals = pickBook('totals');
+
+  const awayML = h2h.find(o => o.name === lines.away);
+  const homeML = h2h.find(o => o.name === lines.home);
+  const awaySp = spreads.find(o => o.name === lines.away);
+  const homeSp = spreads.find(o => o.name === lines.home);
+  const over = totals.find(o => o.name === 'Over');
+  const under = totals.find(o => o.name === 'Under');
+
+  const formatPrice = (p) => p == null ? '—' : (p > 0 ? `+${p}` : p);
+  const formatSpread = (o) => o?.point == null ? '—' : (o.point > 0 ? `+${o.point}` : o.point);
+
+  strip.innerHTML = `
+    <span class="gls-label">Game Lines · DK</span>
+    <div class="gls-market">
+      <span class="gls-market-label">ML</span>
+      <div class="gls-pill"><span class="t">${shortTeam(lines.away)}</span><span class="p">${formatPrice(awayML?.price)}</span></div>
+      <div class="gls-pill"><span class="t">${shortTeam(lines.home)}</span><span class="p">${formatPrice(homeML?.price)}</span></div>
+    </div>
+    <div class="gls-market">
+      <span class="gls-market-label">Spread</span>
+      <div class="gls-pill"><span class="t">${shortTeam(lines.away)} ${formatSpread(awaySp)}</span><span class="p">${formatPrice(awaySp?.price)}</span></div>
+      <div class="gls-pill"><span class="t">${shortTeam(lines.home)} ${formatSpread(homeSp)}</span><span class="p">${formatPrice(homeSp?.price)}</span></div>
+    </div>
+    <div class="gls-market">
+      <span class="gls-market-label">Total</span>
+      <div class="gls-pill"><span class="t">O ${over?.point || '—'}</span><span class="p">${formatPrice(over?.price)}</span></div>
+      <div class="gls-pill"><span class="t">U ${under?.point || '—'}</span><span class="p">${formatPrice(under?.price)}</span></div>
+    </div>
+  `;
+}
+
+// ═══ Render: Player props list ═════════════════════════════════
+const MARKET_LABELS = {
+  player_points: 'Points',
+  player_rebounds: 'Rebounds',
+  player_assists: 'Assists',
+  player_threes: '3PT Made',
+};
+const MARKET_FILTER_MAP = {
+  all: null,
+  points: 'player_points',
+  rebounds: 'player_rebounds',
+  assists: 'player_assists',
+  threes: 'player_threes',
+};
+
+function renderPlayerProps() {
   const list = document.getElementById('props-list');
-  const filtered = state.activeFilter === 'all'
-    ? MOCK_PROPS
-    : state.activeFilter === 'hot'
-      ? MOCK_PROPS.filter(p => p.hot)
-      : MOCK_PROPS.filter(p => p.cat === state.activeFilter);
+  const eid = oddsState.selectedEventId;
+  const props = (oddsState.playerProps[eid] || []);
+  if (props.length === 0) {
+    list.innerHTML = '<div class="loading-state">No props available for this game yet.</div>';
+    return;
+  }
+
+  const filterMarket = MARKET_FILTER_MAP[oddsState.activeFilter];
+  const filtered = filterMarket ? props.filter(p => p.market === filterMarket) : props;
+
+  // Sort by market, then player
+  filtered.sort((a, b) => a.market.localeCompare(b.market) || a.player.localeCompare(b.player));
 
   list.innerHTML = filtered.map((p, i) => {
-    const initials = p.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+    const initials = (p.player || '??').split(' ').map(n => n[0]).slice(0, 2).join('');
+    const dk = p.books.draftkings || {};
+    const fd = p.books.fanduel || {};
+    const formatPrice = (x) => x == null ? '' : (x > 0 ? `+${x}` : x);
+    const oddsBtn = (book, side, data) => {
+      if (!data || data.price == null) return `<div class="odds-btn empty"><div class="label">${side}</div><div class="line">—</div><div class="price">—</div></div>`;
+      return `<button class="odds-btn" data-idx="${i}" data-book="${book}" data-side="${side}">
+        <div class="label">${side}</div>
+        <div class="line">${data.line}</div>
+        <div class="price">${formatPrice(data.price)}</div>
+      </button>`;
+    };
     return `
       <div class="prop-card">
         <div class="prop-avatar">${initials}</div>
         <div class="prop-info">
-          <div class="name">${p.name} ${p.hot ? '<span style="color: var(--oxblood-bright); font-size: 12px;">🔥</span>' : ''}</div>
-          <div class="meta">${p.team} · ${p.pos}</div>
-          <div class="prop-label">${p.prop.toUpperCase()} · LINE ${p.line}</div>
-          <div class="pick-reason">${p.reason}</div>
+          <div class="name">${p.player}</div>
+          <div class="prop-label">${(MARKET_LABELS[p.market] || p.market).toUpperCase()} · LINE ${p.line}</div>
         </div>
         <div class="prop-odds">
-          <button class="odds-btn" data-prop="${i}" data-side="over">
-            <div class="label">Over</div>
-            <div class="line">${p.line}</div>
-            <div class="price">${p.over > 0 ? '+' : ''}${p.over}</div>
-          </button>
-          <button class="odds-btn" data-prop="${i}" data-side="under">
-            <div class="label">Under</div>
-            <div class="line">${p.line}</div>
-            <div class="price">${p.under > 0 ? '+' : ''}${p.under}</div>
-          </button>
+          <span class="book-label dk">DK</span>
+          ${oddsBtn('draftkings', 'over', dk.over)}
+          ${oddsBtn('draftkings', 'under', dk.under)}
+          <span class="book-label fd">FD</span>
+          ${oddsBtn('fanduel', 'over', fd.over)}
+          ${oddsBtn('fanduel', 'under', fd.under)}
         </div>
       </div>
     `;
   }).join('');
 
-  list.querySelectorAll('.odds-btn').forEach(btn => {
+  // Attach handlers
+  list.querySelectorAll('.odds-btn[data-idx]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.prop);
+      const idx = parseInt(btn.dataset.idx);
+      const book = btn.dataset.book;
       const side = btn.dataset.side;
       const prop = filtered[idx];
-      const existing = state.propSelections.findIndex(s => s.name === prop.name && s.prop === prop.prop);
+      const bookData = prop.books[book]?.[side];
+      if (!bookData) return;
+      // Dedupe on player+market+side+book
+      const existing = state.propSelections.findIndex(s =>
+        s.name === prop.player && s.prop === prop.market && s.side === side && s.book === book
+      );
       if (existing >= 0) {
         state.propSelections.splice(existing, 1);
       } else {
-        state.propSelections.push({ name: prop.name, prop: prop.prop, line: prop.line, side, price: side === 'over' ? prop.over : prop.under });
+        state.propSelections.push({
+          name: prop.player,
+          prop: MARKET_LABELS[prop.market] || prop.market,
+          line: bookData.line,
+          side,
+          price: bookData.price,
+          book,
+        });
       }
       renderSlip();
-      renderProps();
+      renderPlayerProps();
     });
   });
 
-  // highlight selected
+  // Highlight selected
   state.propSelections.forEach(sel => {
-    const idx = filtered.findIndex(p => p.name === sel.name && p.prop === sel.prop);
-    if (idx >= 0) {
-      const btn = list.querySelector(`.odds-btn[data-prop="${idx}"][data-side="${sel.side}"]`);
+    filtered.forEach((p, i) => {
+      if (p.player !== sel.name || (MARKET_LABELS[p.market] || p.market) !== sel.prop) return;
+      const btn = list.querySelector(`.odds-btn[data-idx="${i}"][data-book="${sel.book}"][data-side="${sel.side}"]`);
       btn?.classList.add('selected');
-    }
+    });
   });
 }
 
+// ─── Bet slip (same logic as before, adapted) ──────────────────
 function renderSlip() {
   const items = document.getElementById('slip-items');
   const count = state.propSelections.length;
@@ -1150,7 +1602,7 @@ function renderSlip() {
       <div class="slip-item">
         <div>
           <div class="who">${s.name}</div>
-          <div class="what">${s.side.toUpperCase()} ${s.line} ${s.prop} · ${s.price > 0 ? '+' : ''}${s.price}</div>
+          <div class="what">${s.side.toUpperCase()} ${s.line} ${s.prop} · ${s.price > 0 ? '+' : ''}${s.price}${s.book ? ' · ' + (s.book === 'draftkings' ? 'DK' : 'FD') : ''}</div>
         </div>
         <div class="remove" onclick="removeSlip(${i})">✕</div>
       </div>
@@ -1161,7 +1613,6 @@ function renderSlip() {
   document.getElementById('slip-stake-display').textContent = stake.toFixed(2);
 
   if (count > 0) {
-    // parlay multiplier from American odds
     const decimals = state.propSelections.map(s => americanToDecimal(s.price));
     const combined = decimals.reduce((a, b) => a * b, 1);
     const payout = stake * combined;
@@ -1182,24 +1633,24 @@ function americanToDecimal(odds) {
 window.removeSlip = (i) => {
   state.propSelections.splice(i, 1);
   renderSlip();
-  renderProps();
+  if (oddsState.selectedEventId) renderPlayerProps();
 };
 
 document.getElementById('slip-stake').addEventListener('input', renderSlip);
 document.getElementById('place-bet-btn').addEventListener('click', () => {
-  alert(`Parlay placed (demo): ${state.propSelections.length} legs, potential payout $${document.getElementById('slip-payout').textContent}`);
+  alert(`Parlay placed (demo · virtual currency): ${state.propSelections.length} legs, potential payout $${document.getElementById('slip-payout').textContent}`);
   state.propSelections = [];
   document.getElementById('slip-stake').value = 10;
   renderSlip();
-  renderProps();
+  if (oddsState.selectedEventId) renderPlayerProps();
 });
 
 document.querySelectorAll('.props-filters .chip').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.props-filters .chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    state.activeFilter = chip.dataset.filter;
-    renderProps();
+    oddsState.activeFilter = chip.dataset.filter;
+    if (oddsState.selectedEventId) renderPlayerProps();
   });
 });
 
@@ -1556,7 +2007,7 @@ setInterval(driftMarket, 20000);
 // ═══════════════════════════════════════════════════════════════
 loadScoreboard();
 loadNews();
-renderProps();
+loadOddsEvents();
 renderSlip();
 loadInsiderWire();
 initFantasyMarket();
